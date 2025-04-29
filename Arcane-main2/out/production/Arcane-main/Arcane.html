@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Consulta de Personajes - Arcane</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', sans-serif;
+            background-color: #f0f4f8;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 2rem;
+        }
+        h1, h2 {
+            color: #333;
+        }
+        input, button {
+            padding: 0.5rem;
+            font-size: 1rem;
+            margin: 0.5rem;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+        }
+        button {
+            background-color: #007bff;
+            color: white;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+        .personaje-card {
+            background: #fff;
+            padding: 1rem;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+            margin: 0.5rem;
+            max-width: 500px;
+            text-align: left;
+        }
+        #listaPersonajes {
+            margin-top: 2rem;
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+    </style>
+</head>
+<body>
+
+<h1>Personajes - Arcane</h1>
+
+<h2>Crear nuevo personaje</h2>
+<form onsubmit="crear(event)">
+    <input type="text" id="nombre" placeholder="Nombre" required><br>
+    <input type="text" id="origen" placeholder="Origen"><br>
+    <input type="text" id="rol" placeholder="Rol"><br>
+    <input type="text" id="alineacion" placeholder="Alineación"><br>
+    <button type="submit">Crear</button>
+</form>
+
+<div id="listaPersonajes">
+    <h2>Lista de personajes</h2>
+    <div id="personajesContainer">Cargando personajes...</div>
+</div>
+
+<script>
+    const apiUrl = "http://localhost:8080/api/personajes";
+
+    function cargarPersonajes() {
+        fetch(apiUrl)
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error("No se pudo obtener la lista de personajes");
+                }
+                return response.json();
+            })
+            .then(data => {
+                const container = document.getElementById("personajesContainer");
+                container.innerHTML = "";
+
+                if (data.length === 0) {
+                    container.textContent = "No hay personajes creados.";
+                    return;
+                }
+
+                data.forEach(personaje => {
+                    const card = document.createElement("div");
+                    card.className = "personaje-card";
+                    card.innerHTML = `
+                        <strong>ID:</strong> ${personaje.idPersonaje}<br>
+                        <strong>Nombre:</strong> ${personaje.nombre}<br>
+                        <strong>Origen:</strong> ${personaje.origen}<br>
+                        <strong>Rol:</strong> ${personaje.rol}<br>
+                        <strong>Alineación:</strong> ${personaje.alineacion}<br>
+                    `;
+                    container.appendChild(card);
+                });
+            })
+            .catch(error => {
+                document.getElementById("personajesContainer").textContent = error.message;
+            });
+    }
+
+    function crear(e) {
+        e.preventDefault();
+
+        const data = {
+            nombre: document.getElementById("nombre").value,
+            origen: document.getElementById("origen").value,
+            rol: document.getElementById("rol").value,
+            alineacion: document.getElementById("alineacion").value
+        };
+
+        fetch(apiUrl, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify(data)
+        })
+        .then(res => {
+            if (!res.ok) {
+                throw new Error("Error al crear personaje");
+            }
+            return res.json();
+        })
+        .then(result => {
+            alert("Personaje creado con éxito: " + result.nombre);
+            cargarPersonajes(); // Recargar lista después de crear
+        })
+        .catch(err => {
+            console.error(err);
+            alert("Error al crear personaje");
+        });
+    }
+
+    // Cargar la lista automáticamente al cargar la página
+    window.onload = cargarPersonajes;
+</script>
+
+</body>
+</html>
