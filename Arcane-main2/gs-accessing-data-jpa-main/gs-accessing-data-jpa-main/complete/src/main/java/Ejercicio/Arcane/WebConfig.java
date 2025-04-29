@@ -16,7 +16,7 @@ public class WebConfig implements WebMvcConfigurer {
     @Override
     public void addViewControllers(ViewControllerRegistry registry) {
         // Esto hace que al entrar a localhost:8080/ muestre tu personajes.html
-        registry.addViewController("/").setViewName("forward:/Arcane.html");
+        registry.addViewController("/").setViewName("forward:/personajes.html");
     }
 }
 
