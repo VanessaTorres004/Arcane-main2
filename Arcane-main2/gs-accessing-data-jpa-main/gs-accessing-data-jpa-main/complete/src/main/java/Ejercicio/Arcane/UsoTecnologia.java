@@ -14,5 +14,27 @@ public class UsoTecnologia {
     @ManyToOne
     private Tecnologia tecnologia;
 
-    // Getters y setters omitidos por brevedad
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public Personaje getPersonaje() {
+        return personaje;
+    }
+
+    public void setPersonaje(Personaje personaje) {
+        this.personaje = personaje;
+    }
+
+    public Tecnologia getTecnologia() {
+        return tecnologia;
+    }
+
+    public void setTecnologia(Tecnologia tecnologia) {
+        this.tecnologia = tecnologia;
+    }
 }
